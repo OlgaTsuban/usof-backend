@@ -1,0 +1,4 @@
+USE usof;
+
+ALTER TABLE posts ADD COLUMN locked BOOLEAN DEFAULT false;
+ALTER TABLE comments ADD COLUMN locked BOOLEAN DEFAULT false;

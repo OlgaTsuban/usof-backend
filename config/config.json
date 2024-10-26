@@ -1,0 +1,14 @@
+{
+    "database": "usof",
+    "user": "olgatsybanusof",
+    "host": "localhost",
+    "password": "securepass",
+    "connectionLimit": 3,
+    "enableKeepAlive": true,
+    "keepAliveInitialDelay": 0,
+    "emailHost": "smtp.ethereal.email",
+    "emailPort": 587,
+    "emailSecure": false,
+    "emailUser": "doyle.dickens@ethereal.email",
+    "emailPass": "Ra8WNGABVDyAuYJrW4"
+}
