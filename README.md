@@ -56,7 +56,7 @@ Before you begin, ensure that you have the following installed and configured:
    ```
 
 ## API Documentation:
-You can explore the API documentation using this link: [USOF API Documentation]().
+You can explore the API documentation using this link: [USOF API Documentation](https://documenter.getpostman.com/view/32454691/2sAY4sjjVc).
 
 # API Documentation
 
