@@ -1,19 +1,22 @@
 const pool = require('../config/db');
 
-const Category = {
-    getAllCategories: async () => {
+class Category {
+    // Get all categories
+    static async getAllCategories() {
         const sql = 'SELECT * FROM categories';
         const [rows] = await pool.query(sql);
         return rows;
-    },
+    }
 
-    getCategoryById: async (categoryId) => {
+    // Get a specific category by ID
+    static async getCategoryById(categoryId) {
         const sql = 'SELECT * FROM categories WHERE id = ?';
         const [rows] = await pool.query(sql, [categoryId]);
         return rows[0];
-    },
+    }
 
-    getPostsByCategoryId: async (categoryId) => {
+    // Get posts for a specific category by ID
+    static async getPostsByCategoryId(categoryId) {
         const sql = `
             SELECT posts.*
             FROM posts
@@ -22,15 +25,17 @@ const Category = {
         `;
         const [rows] = await pool.query(sql, [categoryId]);
         return rows;
-    },
+    }
 
-    createCategory: async (title, description = null) => {
+    // Create a new category
+    static async createCategory(title, description = null) {
         const sql = 'INSERT INTO categories (title, description) VALUES (?, ?)';
         const [result] = await pool.query(sql, [title, description]);
         return result;
-    },
-    
-    updateCategory: async (categoryId, title, description) => {
+    }
+
+    // Update an existing category
+    static async updateCategory(categoryId, title, description) {
         const fields = [];
         const values = [];
     
@@ -47,13 +52,14 @@ const Category = {
         const sql = `UPDATE categories SET ${fields.join(', ')} WHERE id = ?`;
         const [result] = await pool.query(sql, values);
         return result;
-    },
+    }
 
-    deleteCategory: async (categoryId) => {
+    // Delete a category by ID
+    static async deleteCategory(categoryId) {
         const sql = 'DELETE FROM categories WHERE id = ?';
         const [result] = await pool.query(sql, [categoryId]);
         return result;
-    },
-};   
+    }
+}
 
 module.exports = Category;

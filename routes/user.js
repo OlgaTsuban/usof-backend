@@ -60,19 +60,21 @@ router.patch('/:user_id', isAuthenticated, async (req, res) => {
     const { login, email, fullName } = req.body; 
     const authorId = req.session.user.id;
     const userRole = req.session.user.role;
+    console.log(userRole);
     try {
         
         const user = await User.getById(user_id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        if (authorId !== user_id || userRole !== 'admin') {
+        if (authorId !== user_id && userRole !== 'admin') {
             return res.status(403).json({ message: 'You are not authorized to update this user.' });
         }
         if (login || email) {
             const existingUser = await User.findByLoginOrEmail(login, email);
-            console.log(existingUser);
-            if (existingUser.length > 0 && existingUser.id !== user_id) {
+            console.log(typeof existingUser[0].id);
+            console.log(typeof user_id);
+            if (existingUser.length > 0 && existingUser[0].id.toString() !== user_id) {
                 return res.status(400).json({ message: 'Login or email is already used by another user' });
             }
         }

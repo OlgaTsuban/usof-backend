@@ -1,8 +1,8 @@
 const pool = require('../config/db');
 
-const Post = {
+class Post  {
     // Create a new post
-    create: async (title, content, authorId) => {
+    static async create (title, content, authorId)  {
         const sql = 'INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)';
         try {
             const result = await pool.query(sql, [title, content, authorId]);
@@ -12,10 +12,10 @@ const Post = {
             console.error('Error creating post:', err);
             throw err;
         }
-    },
+    }
 
     // Get all posts with pagination
-    getAll: async (page = 1, pageSize = 10) => {
+    static async getAll (page = 1, pageSize = 10) {
         page = parseInt(page);
         pageSize = parseInt(pageSize);
 
@@ -31,8 +31,8 @@ const Post = {
             console.error('Error fetching posts:', err);
             throw err;
         }
-    },
-    findAll: async (queryOptions) => {
+    }
+    static async findAll (queryOptions) {
         try {
             const { page = 1, pageSize = 10 } = queryOptions;
             const userId = queryOptions.where.author_id; 
@@ -45,8 +45,8 @@ const Post = {
             console.error('Error fetching posts:', err);
             throw err;
         }
-    },
-    count: async () => {
+    }
+    static async count ()  {
         const sql = 'SELECT COUNT(*) AS totalPosts FROM posts';
         try {
             const [rows] = await pool.query(sql);
@@ -55,8 +55,8 @@ const Post = {
             console.error('Error counting posts:', err);
             throw err;
         }
-    },
-    countByUser: async (userId) => {
+    }
+    static async countByUser (userId) {
         try {
             const count = await Post.count({
                 where: {
@@ -68,10 +68,10 @@ const Post = {
         } catch (error) {
             throw new Error(`Error counting posts for user ${userId}: ${error.message}`);
         }
-    },
+    }
 
     // Get a specific post by ID
-    getById: async (postId) => {
+    static async getById (postId) {
         const sql = 'SELECT * FROM posts WHERE id = ?';
         try {
             const [rows] = await pool.query(sql, [postId]);
@@ -80,10 +80,10 @@ const Post = {
             console.error('Error fetching post by ID:', err);
             throw err;
         }
-    },
+    }
 
     // Update a post by ID
-    updateById: async (postId, title, content) => {
+    static async updateById (postId, title, content) {
         const sql = 'UPDATE posts SET title = ?, content = ? WHERE id = ?';
         try {
             const result = await pool.query(sql, [title, content, postId]);
@@ -93,8 +93,9 @@ const Post = {
             console.error('Error updating post:', err);
             throw err;
         }
-    },
-    updateByAdmin: async (postId, active) => {
+    }
+
+    static async updateByAdmin (postId, active) {
         const sql = 'UPDATE posts SET  status = ? WHERE id = ?';
         try {
             const result = await pool.query(sql, [active, postId]);
@@ -104,10 +105,10 @@ const Post = {
             console.error('Error updating post by admin:', err);
             throw err;
         }
-    },
+    }
     
     // Delete a post by ID
-    deleteById: async (postId) => {
+    static async deleteById (postId) {
         const sql = 'DELETE FROM posts WHERE id = ?';
         try {
             const result = await pool.query(sql, [postId]);
@@ -117,9 +118,9 @@ const Post = {
             console.error('Error deleting post:', err);
             throw err;
         }
-    },
+    }
 
-    getComments: async (postId) => {
+    static async getComments (postId) {
         const sql = 'SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC';
         try {
             const [rows] = await pool.query(sql, [postId]);
@@ -128,10 +129,10 @@ const Post = {
             console.error('Error fetching comments:', err);
             throw err;
         }
-    },
+    }
 
     // Create a new comment for a specific post
-    createComment: async (postId, authorId, content) => {
+    static async createComment (postId, authorId, content)  {
         const [post] = await pool.query(`SELECT locked FROM posts WHERE id = ?`, [postId]);
         if (post.locked) {
             return res.status(403).send({ error: 'This post is locked. You cannot add comments.' });
@@ -145,9 +146,9 @@ const Post = {
             console.error('Error creating comment:', err);
             throw err;
         }
-    },
+    }
 
-    getCategories: async (postId) => {
+    static async getCategories (postId) {
         const sql = `
             SELECT categories.* 
             FROM categories
@@ -161,9 +162,9 @@ const Post = {
             console.error('Error fetching categories:', err);
             throw err;
         }
-    },
+    }
 
-    getLikes: async (postId) => {
+    static async getLikes (postId)  {
         const sql = `
             SELECT users.id, users.login, likes.type
             FROM likes
@@ -177,8 +178,9 @@ const Post = {
             console.error('Error fetching likes:', err);
             throw err;
         }
-    },
-    createPost: async (authorId, title, content, image) => {
+    }
+
+    static async createPost (authorId, title, content, image)  {
         const sql = 'INSERT INTO posts (author_id, title, content, images) VALUES (?, ?, ?, ?)';
         try {
             const [result] = await pool.query(sql, [authorId, title, content, image]);
@@ -187,9 +189,9 @@ const Post = {
             console.error('Error creating post:', err);
             throw err;
         }
-    },
+    }
 
-    addPostCategory: async (postId, categoryId) => {
+    static async addPostCategory (postId, categoryId) {
         const sql = 'INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)';
 
         try {
@@ -198,49 +200,50 @@ const Post = {
             console.error('Error associating post with category:', err);
             throw err;
         }
-    },
+    }
 
-    findLikeByAuthorAndPost: async (authorId, postId) => {
+    static async findLikeByAuthorAndPost (authorId, postId) {
         const sql = `SELECT * FROM likes WHERE author_id = ? AND post_id = ?`;
         const [rows] = await pool.query(sql, [authorId, postId]);
         return rows.length > 0 ? rows[0] : null;
-    },
+    }
     
     // Function to create a like
-    createLike: async (authorId, postId, type) => {
+    static async createLike (authorId, postId, type) {
         const sql = `INSERT INTO likes (author_id, post_id, type) VALUES (?, ?, ?)`;
         const [result] = await pool.query(sql, [authorId, postId, type]);
         return result;
-    },
-    updatePostCategories: async (postId, categories) => {
+    }
+
+    static async updatePostCategories(postId, categories) {
         await pool.query(`DELETE FROM post_categories WHERE post_id = ?`, [postId]);
     
         for (const categoryId of categories) {
             await pool.query(`INSERT INTO post_categories (post_id, category_id) VALUES (?, ?)`, [postId, categoryId]);
         }
-    },
-    deletePostById: async (postId) => {
+    }
+    static async deletePostById (postId)  {
         const sql = `DELETE FROM posts WHERE id = ?`;
         await pool.query(sql, [postId]);
-    },
-    findLikeByAuthorAndPost: async (authorId, postId) => {
+    }
+    static async findLikeByAuthorAndPost (authorId, postId)  {
         const sql = `SELECT * FROM likes WHERE author_id = ? AND post_id = ?`;
         const [rows] = await pool.query(sql, [authorId, postId]);
         return rows.length > 0 ? rows[0] : null;
-    },
+    }
     
-    deleteLikeById: async (likeId) => {
+    static async deleteLikeById (likeId)  {
         const sql = `DELETE FROM likes WHERE id = ?`;
         await pool.query(sql, [likeId]);
-    },
-    getSortedPosts: async (sort) => {
+    }
+    static async getSortedPosts (sort)  {
         const orderBy = sort === 'date' ? 'publish_date DESC' : '(SELECT COUNT(*) FROM likes WHERE post_id = posts.id) DESC';
         const sql = `SELECT * FROM posts ORDER BY ${orderBy}`;
         
         const [rows] = await pool.query(sql);
         return rows;
-    },
-    getFilteredPosts: async ({ category, startDate, endDate, status }) => {
+    }
+    static async getFilteredPosts ({ category, startDate, endDate, status })  {
         try {
             let query = `
                 SELECT DISTINCT p.* 
@@ -273,9 +276,9 @@ const Post = {
         } catch (err) {
             throw err;
         }
-    },    
+    }    
 
-    lockPost: async (postId, locked) => {
+    static async lockPost (postId, locked)  {
         try {
             const query = `UPDATE posts SET locked = ? WHERE id = ?`;
             const result = await pool.query(query, [locked, postId]);
@@ -284,7 +287,7 @@ const Post = {
             console.error(error);
             throw err;
         }
-    },    
+    }  
     
 
 };

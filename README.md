@@ -20,18 +20,19 @@ Before you begin, ensure that you have the following installed and configured:
    git clone <url_usof>
    ```
 
-2. **Install necessary dependencies**:
+2. **Navigate to the server directory:**:
+   or be careful with the folders name
+
+   ```bash
+   cd otsyban 
+   ```
+
+3. **Install necessary dependencies**:
 
    Navigate to the project folder and run:
 
    ```bash
    npm install
-   ```
-
-3. **Navigate to the server directory:**:
-
-   ```bash
-   cd usof
    ```
 
 4. **Configure environment variables:**:
@@ -40,11 +41,22 @@ Before you begin, ensure that you have the following installed and configured:
 
 
 5. **Run sql code to build necessary tables/db:**:
+   ***Please be careful and check the file names!***
 
    Run sql code:
 
    ```bash
-   mysql -u root < example.sql
+   mysql -u root < example.sql (general aproach)
+   mysql -u root < sql/db.sql
+   mysql -u root < sql/create_table_users.sql
+   mysql -u root < sql/create_table_posts.sql
+   mysql -u root < sql/create_table_subscriptions.sql
+   mysql -u root < sql/create_table_commnents.sql
+   mysql -u root < sql/create_table_confirmation_email.sql
+   mysql -u root < sql/create_table_favourites.sql
+   mysql -u root < sql/create_table_likes.sql
+   mysql -u root < sql/alter_locked_tables.sql
+   mysql -u root < sql/insert_data.sql
    ```
 
 6. **Start the server:**:

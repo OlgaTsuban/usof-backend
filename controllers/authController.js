@@ -74,6 +74,7 @@ exports.login = async (req, res) => {
             login: userData.login,
             email: userData.email, 
         };
+        console.log(req.session);
         req.session.save((err) => {
             if (err) {
                 return res.status(500).json({ message: 'Failed to save session' });

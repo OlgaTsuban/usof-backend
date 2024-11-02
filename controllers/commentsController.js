@@ -60,10 +60,19 @@ exports.createLikeForComment = async (req, res) => {
         if (!postExists) {
             return res.status(404).json({ message: 'Post does not exist.' });
         }
-
+        try {
         const result = await Comment.createLikeForComment(authorId, postId, commentId, type);
-
+        if (result.status === 400) {
+            return res.status(result.status).json({ message: result.message });
+        }
+        console.log(result);
         res.status(201).json({ message: 'Like added successfully', likeId: result.insertId });
+    }
+        catch(err) {
+            console.error('Error creating like:', err);
+            res.status(500).json({ message: 'Error creating like', error: err.message });
+        }
+        //res.status(201).json({ message: 'Like added successfully', likeId: result.insertId });
     } catch (err) {
         console.error('Error creating like:', err);
         res.status(500).json({ message: 'Error creating like', error: err.message });
@@ -177,7 +186,8 @@ exports.lockCommentById = async (req, res) => {
         if (typeof lock === 'undefined') {
             return res.status(400).json({ message: 'Lock status is required to update the comment.' });
         }
-    if (!lock ) {
+    console.log(lock);
+    if (lock === null ) {
         return res.status(400).json({ message: 'Content/status is required to update the comment.' });
     }
 

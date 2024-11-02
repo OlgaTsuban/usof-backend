@@ -1,17 +1,17 @@
 const pool = require('../config/db');
 
-const Favorite = {
-    addFavorite: async (userId, postId) => {
+class Favorite {
+    static async addFavorite(userId, postId) {
         const query = `INSERT INTO favorite_posts (user_id, post_id) VALUES (?, ?)`;
         await pool.query(query, [userId, postId]);
-    },
+    }
 
-    removeFavorite: async (userId, postId) => {
+    static async removeFavorite(userId, postId) {
         const query = `DELETE FROM favorite_posts WHERE user_id = ? AND post_id = ?`;
         await pool.query(query, [userId, postId]);
-    },
+    }
 
-    getFavoritePostsByUser: async (userId) => {
+    static async getFavoritePostsByUser(userId) {
         const query = `
             SELECT p.* 
             FROM posts p
@@ -19,14 +19,14 @@ const Favorite = {
             WHERE fp.user_id = ?`;
         const [rows] = await pool.query(query, [userId]);
         return rows;
-    },
+    }
 
-    removePostFromFavorites: async (userId, postId) => {
+    static async removePostFromFavorites(userId, postId) {
         const query = `DELETE FROM favorite_posts WHERE user_id = ? AND post_id = ?`;
         await pool.query(query, [userId, postId]);
-    },
+    }
 
-    getPaginatedPosts: async (page, limit, user_id) => {
+    static async getPaginatedPosts(page, limit, userId) {
         const offset = (page - 1) * limit; 
         const query = `
             SELECT p.* 
@@ -36,13 +36,13 @@ const Favorite = {
             ORDER BY p.publish_date DESC
             LIMIT ? OFFSET ?`;
 
-        const [rows] = await pool.query(query, [user_id, limit, offset]);
+        const [rows] = await pool.query(query, [userId, limit, offset]);
 
-        const [totalResult] = await pool.query('SELECT COUNT(*) as total FROM favorite_posts');
+        const [totalResult] = await pool.query('SELECT COUNT(*) as total FROM favorite_posts WHERE user_id = ?', [userId]);
         const totalPosts = totalResult[0].total;
 
         return { posts: rows, totalPosts };
-    },
-};
+    }
+}
 
 module.exports = Favorite;
